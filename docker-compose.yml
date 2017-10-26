@@ -1,0 +1,77 @@
+spark-master:
+  image: chinapex/spark:2.2.0
+  hostname: spark-master
+#  links:
+#  - spark-master
+#  - spark-slave1
+#  - spark-slave2
+#  - spark-slave3
+  ports:
+  - "4040:4040"
+  - "8042:8042"
+  - "7077:7077"
+  - "18080:8080"
+  - "18081:8081"
+  - "8088:8088"
+  - "2122:2122"
+  - "50070:50070"
+  restart: always
+  environment:
+  - SPARK_MASTER=spark://spark-master:7077
+#  command: bash /usr/local/spark/sbin/start-master.sh && ping localhost > /dev/null
+  command: ping localhost > /dev/null
+
+spark-slave1:
+  image: chinapex/spark:2.2.0
+  hostname: spark-slave1
+  links:
+  - spark-master
+#  - spark-slave1
+#  - spark-slave2
+#  - spark-slave3
+  ports:
+  - "28081:8081"
+  restart: always
+  environment:
+  - SPARK_MASTER=spark://spark-master:7077
+#  command: bash /usr/local/spark/sbin/start-slave.sh spark://spark-master:7077 && ping localhost >/dev/null
+  command: ping localhost >/dev/null
+
+spark-slave2:
+  image: chinapex/spark:2.2.0
+  hostname: spark-slave2
+  links:
+  - spark-master
+  - spark-slave1
+#  - spark-slave2
+#  - spark-slave3
+  ports:
+  - "38081:8081"
+  restart: always
+  environment:
+  - SPARK_MASTER=spark://spark-master:7077
+#  command: bash /usr/local/spark/sbin/start-slave.sh spark://spark-master:7077 && ping localhost >/dev/null
+  command: bash /etc/deploy-start.sh && ping localhost >/dev/null
+
+#spark-slave3:
+#  image: chinapex/spark:2.2.0
+#  hostname: spark-slave3
+#  links:
+#  - spark-master
+#  - spark-slave1
+#  - spark-slave2
+#  - spark-slave3
+#  ports:
+#  - "38081:8081"
+#  restart: always
+#  environment:
+#  - SPARK_MASTER=spark://spark-master:7077
+#  command:  scp /etc/hosts root@spark-master:/etc/
+#        scp /etc/hosts root@spark-slave1:/etc/
+#        scp /etc/hosts root@spark-slave2:/etc/
+#  command: bash /usr/local/spark/sbin/start-slave.sh spark://spark-master:7077 && ping localhost >/dev/null
+#  command: bash /etc/deploy-start.sh && ping localhost >/dev/null
+
+
+
+  
